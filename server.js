@@ -6,6 +6,10 @@ var app = express();
 var ejs = require('ejs');
 var ejsMate = require('ejs-mate');
 var User = require('./models/user');
+var cookieParser = require('cookie-parser');
+var flash = require('express-flash');
+var session = require('express-session');
+
 mongoose.connect('mongodb://amazon:abcd@ds111771.mlab.com:11771/ecommerce', (err) => {
   if(err){
     console.log(err);
@@ -14,35 +18,31 @@ mongoose.connect('mongodb://amazon:abcd@ds111771.mlab.com:11771/ecommerce', (err
     console.log('Connected To database');
   }
 })
+var port = process.env.PORT || 3000; // set our port
 
 
 // middleWare
+app.use(express.static(__dirname + '/public'));
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
+app.use(session({
+  resave: true, // save back to session Storage
+  saveUninitialized: true,
+  secret: "Simran@#$%"
+}));
+app.use(flash());
+
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 
-// Create User
-app.post('/create-user', (req, res, next) => {
-  var user = new User();
-  user.profile.name = req.body.name;
-  user.password = req.body.password;
-  user.email = req.body.email;
-  user.save((err) => {
-    if(err)  return next(err);
-    res.json('Successfully Created new User');
-  });
-});
+var mainRoutes = require('./routes/main');
+var userRoutes = require('./routes/user');
+app.use(mainRoutes);
+app.use(userRoutes);
 
-
-app.get('/', (req, res) => {
-    res.render('home');
-})
-app.get('/about', (req, res) => {
-  res.render('about');
-})
-app.listen(3000, (err) => {
+app.listen(port, (err) => {
   if(err) throw err;
   console.log('Server is Running on 3000');
 })
