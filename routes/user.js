@@ -34,6 +34,7 @@ router.post('/signup', (req, res, next) => {
   user.profile.name = req.body.name;
   user.password = req.body.password;
   user.email = req.body.email;
+  user.profile.picture = user.gravatar();
 
   User.findOne({email: req.body.email}, (err, existingUser) => {
     if(existingUser){
@@ -43,7 +44,11 @@ router.post('/signup', (req, res, next) => {
       user.save((err, user) => {
         if(err) return next(err);
 
-        return res.redirect('/');
+        // adding session to the server and cookie to the browser
+        req.logIn(user, function(err) {
+          if(err) return next(err);
+          res.redirect('/profile');
+        })
       });
     }
   });
@@ -52,6 +57,30 @@ router.post('/signup', (req, res, next) => {
 router.get('/logout', (req, res, next) => {
   req.logout();
   res.redirect('/');
+});
+
+router.get('/edit-profile', (req, res, next) => {
+  res.render('account/edit-profile.ejs', {message: req.flash('success')});
+});
+
+router.post('/edit-profile', ( req, res, next) => {
+  User.findOne({_id: req.user._id}, (err, user) => {
+    if(err)  return next(err);
+
+    if(req.body.name) {
+      user.profile.name = req.body.name;
+    }
+
+    if(req.body.address){
+      user.address = req.body.address;
+    }
+
+    user.save((err) => {
+      if(err) return next(err);
+      req.flash('success', 'Successfully  Edited your profile');
+      return res.redirect('/edit-profile');
+    });
+  });
 });
 
 module.exports = router;
