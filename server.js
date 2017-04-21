@@ -9,8 +9,10 @@ var User = require('./models/user');
 var cookieParser = require('cookie-parser');
 var flash = require('express-flash');
 var session = require('express-session');
-
-mongoose.connect('mongodb://amazon:abcd@ds111771.mlab.com:11771/ecommerce', (err) => {
+var secret = require('./config/secret');
+var MongoStore = require('connect-mongo')(session); // Passing session to MongoStore
+var passport = require('passport');
+mongoose.connect(secret.database, (err) => {
   if(err){
     console.log(err);
   }
@@ -18,9 +20,8 @@ mongoose.connect('mongodb://amazon:abcd@ds111771.mlab.com:11771/ecommerce', (err
     console.log('Connected To database');
   }
 })
-var port = process.env.PORT || 3000; // set our port
-
-
+ // set our port
+  var port = secret.port;
 // middleWare
 app.use(express.static(__dirname + '/public'));
 app.use(morgan('dev'));
@@ -30,9 +31,16 @@ app.use(cookieParser());
 app.use(session({
   resave: true, // save back to session Storage
   saveUninitialized: true,
-  secret: "Simran@#$%"
+  secret:secret.secretKey,
+  store: new MongoStore({url: secret.database, autoReconnect: true})
 }));
 app.use(flash());
+app.use(passport.initialize()); // to tell we use passport
+app.use(passport.session()); // cookie To sessionId,To deserialized
+app.use((req, res, next) => {
+  res.locals.user = req.user;
+  next();
+});
 
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
@@ -44,5 +52,5 @@ app.use(userRoutes);
 
 app.listen(port, (err) => {
   if(err) throw err;
-  console.log('Server is Running on 3000');
+  console.log('Server is Running on '+ secret.port);
 })
