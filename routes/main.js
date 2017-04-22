@@ -9,7 +9,7 @@ var paginate = (req, res, next) => {
 
     Product
        .find()
-       .skip(perPage * page)
+       .skip(perPage * page) // This is to how much we Skip i.e if we are on page 1 than we will skip 9 * 1 (9) .... Our paging is starting from zero
        .limit(perPage)
        .populate('category')
        .exec((err, products) => {

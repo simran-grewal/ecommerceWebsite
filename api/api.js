@@ -5,6 +5,19 @@ var Category = require('../models/category');
 var Product = require('../models/product');
 
 
+// This is Instance search API
+router.post('/search', (req, res, next) => {
+  Product.search({
+    query_string: {query: req.body.search_term}
+  },  (err, results) => {
+      if(err) return next(err);
+
+      res.json(results);
+  })
+})
+
+
+
 router.get('/:name', (req, res, next) => {
 
   async.waterfall([
