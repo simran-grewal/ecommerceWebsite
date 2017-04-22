@@ -2,6 +2,30 @@ var router = require('express').Router();
 var Product = require('../models/product');
 
 
+var paginate = (req, res, next) => {
+  // This is pagination
+    var perPage = 9;  // Every page will have 9 product items
+    var page = req.params.page;
+
+    Product
+       .find()
+       .skip(perPage * page)
+       .limit(perPage)
+       .populate('category')
+       .exec((err, products) => {
+         if(err) return next(err);
+
+         // To Count Product so that we can paging according to it
+         Product.count().exec((err, count) => {
+           if(err) return next(err);
+           res.render('main/product-main', {
+             products: products,
+             pages: count/perPage
+           });
+         });
+       });
+}
+
 // Creating bridge between  Product database and replica elastic search
 Product.createMapping((err, res) => {
 
@@ -62,13 +86,15 @@ router.get('/search',(req, res, next) => {
     }
 });
 
-router.get('/', (req, res) => {
-    // if(req.user)  {
-    //     var perPage = 9;
-    //     var page = req.params.page;
-    // } else{
+router.get('/', (req, res, next) => {
+     if(req.user)  {
+
+       paginate(req, res, next);
+
+     } else{
+       // If user is not login
     res.render('main/home');
-//  }
+    }
 });
 
 router.get('/about', (req, res) => {
@@ -87,6 +113,10 @@ router.get('/products/:id', (req, res, next) => {
       });
     });
 });
+
+router.get('/page/:page', (req, res, next) => {
+  paginate(req, res, next);
+})
 
 
   router.get('/product/:id', (req, res, next) => {
