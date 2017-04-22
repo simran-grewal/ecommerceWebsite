@@ -10,13 +10,16 @@
       <a href="/" class="navbar-brand">Amazon</a>
     </div>
 
-    <form class="navbar-form navbar-left" method = "post" action="/search">
-      <div class="form-group">
-          <input type="text" name="q" class="form-control" placeholder="search...">
-          <button class = "btn btn-default" type="submit">Submit</button>
-      </div>
-    </form>
+
     <div class="collapse navbar-collapse" id="bs-nav-demo">
+      <ul class="nav navbar-nav">
+        <form class="navbar-form navbar-left" method = "post" action="/search">
+          <div class="form-group">
+              <input type="text" name="q" class="form-control" placeholder="search...">
+              <button class = "btn btn-default" type="submit">Submit</button>
+          </div>
+        </form>
+      </ul>
       <ul class="nav navbar-nav">
         <li><a href="/about">About</a></li>
         <li><a href="#">Contact</a></li>

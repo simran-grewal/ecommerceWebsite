@@ -63,7 +63,12 @@ router.get('/search',(req, res, next) => {
 });
 
 router.get('/', (req, res) => {
+    // if(req.user)  {
+    //     var perPage = 9;
+    //     var page = req.params.page;
+    // } else{
     res.render('main/home');
+//  }
 });
 
 router.get('/about', (req, res) => {
