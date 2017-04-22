@@ -13,6 +13,7 @@ var secret = require('./config/secret');
 var MongoStore = require('connect-mongo')(session); // Passing session to MongoStore
 var passport = require('passport');
 var Category = require('./models/category');
+
 mongoose.connect(secret.database, (err) => {
   if(err){
     console.log(err);
@@ -58,9 +59,11 @@ app.set('view engine', 'ejs');
 var mainRoutes = require('./routes/main');
 var userRoutes = require('./routes/user');
 var adminRoutes = require('./routes/admin');
+var apiRoutes = require('./api/api');
 app.use(mainRoutes);
 app.use(userRoutes);
 app.use(adminRoutes);
+app.use('/api',apiRoutes)
 app.listen(port, (err) => {
   if(err) throw err;
   console.log('Server is Running on '+ secret.port);

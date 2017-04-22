@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var ProductSchema = new Schema({
-  Category: {
+  category: {
     type: Schema.Types.ObjectId, ref: 'Category'
   },
 
