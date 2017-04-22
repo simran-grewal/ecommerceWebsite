@@ -7,6 +7,7 @@ var Product = require('../models/product');
 
 // This is Instance search API
 router.post('/search', (req, res, next) => {
+  console.log(req.body.search_term);
   Product.search({
     query_string: {query: req.body.search_term}
   },  (err, results) => {
