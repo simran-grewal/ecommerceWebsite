@@ -12,6 +12,7 @@ var session = require('express-session');
 var secret = require('./config/secret');
 var MongoStore = require('connect-mongo')(session); // Passing session to MongoStore
 var passport = require('passport');
+var Category = require('./models/category');
 mongoose.connect(secret.database, (err) => {
   if(err){
     console.log(err);
@@ -42,14 +43,24 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  // Means find app Categoies
+  Category.find({}, (err, categories) => {
+    if(err) return next(err);
+    res.locals.categories = categories; // Save Categories in local variable
+    next();
+  });
+});
+
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 
 var mainRoutes = require('./routes/main');
 var userRoutes = require('./routes/user');
+var adminRoutes = require('./routes/admin');
 app.use(mainRoutes);
 app.use(userRoutes);
-
+app.use(adminRoutes);
 app.listen(port, (err) => {
   if(err) throw err;
   console.log('Server is Running on '+ secret.port);
