@@ -1,6 +1,6 @@
 var router = require('express').Router();
 var Product = require('../models/product');
-
+var Cart  = require('../models/cart');
 
 var paginate = (req, res, next) => {
   // This is pagination
@@ -58,6 +58,18 @@ console.log(err);
 })
 
 
+router.get('/cart', (req, res, err) => {
+    Cart
+      .findOne({owner: req.user._id})
+      .populate('items.item')
+      .exec((err, foundCart) => {
+        if(err) return next(err);
+
+        res.render('main/cart', {
+          foundCart: foundCart
+        });
+      });
+});
 
 
 // This is for adding items in cart
