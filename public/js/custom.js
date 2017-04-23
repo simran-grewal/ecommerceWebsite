@@ -49,4 +49,39 @@ $(function() {
   });
 
 
+    //Adding Plus and Minus while buying items
+
+    $(document).on('click', '#plus', function(e){
+
+        e.preventDefault(); // Prevent from page Refresh
+        var priceValue = parseFloat($('#priceValue').val());
+        var quantity = parseInt($('#quantity').val());
+
+
+        priceValue += parseFloat($('#priceHidden').val());
+        quantity += 1;
+
+        $('#quantity').val(quantity); // Replace the current HTML value
+        $('#priceValue').val(priceValue.toFixed(2));
+        $('#total').html(quantity);
+    });
+
+
+    $(document).on('click', '#minus', function(e){
+
+        e.preventDefault(); // Prevent from page Refresh
+        var priceValue = parseFloat($('#priceValue').val());
+        var quantity = parseInt($('#quantity').val());
+
+        if(quantity == 1){
+          priceValue = $('#priceHidden').val();
+          quantity = 1;
+        } else {
+        priceValue -= parseFloat($('#priceHidden').val());
+        quantity -= 1;
+      }
+        $('#quantity').val(quantity); // Replace the current HTML value
+        $('#priceValue').val(priceValue.toFixed(2));
+        $('#total').html(quantity);
+    });
 });
