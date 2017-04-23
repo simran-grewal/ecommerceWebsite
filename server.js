@@ -13,7 +13,7 @@ var secret = require('./config/secret');
 var MongoStore = require('connect-mongo')(session); // Passing session to MongoStore
 var passport = require('passport');
 var Category = require('./models/category');
-
+var cartLength = require('./middlewares/middlewares');
 mongoose.connect(secret.database, (err) => {
   if(err){
     console.log(err);
@@ -44,6 +44,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(cartLength);
 app.use((req, res, next) => {
   // Means find app Categoies
   Category.find({}, (err, categories) => {

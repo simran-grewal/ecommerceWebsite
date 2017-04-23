@@ -22,24 +22,19 @@
       </ul>
       <ul class="nav navbar-nav">
         <li><a href="/about">About</a></li>
-        <li><a href="#">Contact</a></li>
+        <!-- <li><a href="#">Contact</a></li> -->
       </ul>
+
 
       <ul class="nav navbar-nav navbar-right">
-          <li>
-            <a class = "dropdown-toggle" data-toggle = "dropdown" href="#">Categories</a>
-            <ul class = "dropdown-menu">
-              <%
-                for(var i = 0; i < categories.length; i++){
-                  %>
-                      <li><a href="/products/<%= categories[i]._id %>"><%= categories[i].name %>  </a></li>
-                  <%
-                }
+      <% if(user){%>
+        <li><a href="/cart" class = "glyphicon glyphicon-shopping-cart"><span class="badge"><%= cart %></span></a></li>
 
-              %>
-            </ul>
-          </li>
+        <% } else { %>
+          <li><a href="/cart" class = "glyphicon glyphicon-shopping-cart"><span class="badge">0</span></a></li>
+      <%}%>
       </ul>
+
       <% if (!user) { %>
       <ul class="nav navbar-nav navbar-right">
           <li>
@@ -61,8 +56,26 @@
               <li><a href="/logout">Logout</a></li>
             </ul>
           </li>
-      </ul>
+
       <% } %>
+    </ul>
+
+
+    <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a class = "dropdown-toggle" data-toggle = "dropdown" href="#">Categories</a>
+          <ul class = "dropdown-menu">
+            <%
+              for(var i = 0; i < categories.length; i++){
+                %>
+                    <li><a href="/products/<%= categories[i]._id %>"><%= categories[i].name %>  </a></li>
+                <%
+              }
+
+            %>
+          </ul>
+        </li>
+    </ul>
 
     </div>
   </div>
