@@ -2,6 +2,8 @@ var router = require('express').Router();
 var Product = require('../models/product');
 var Cart  = require('../models/cart');
 
+var stripe = require('stripe')('sk_test_FSV1TnnAu8KgXmYsOEtsVtEN');
+
 var paginate = (req, res, next) => {
   // This is pagination
     var perPage = 9;  // Every page will have 9 product items
@@ -179,6 +181,26 @@ router.get('/page/:page', (req, res, next) => {
       if(err) return next(err);
       res.render('main/product', {
         product: product
+      });
+    });
+  });
+
+
+
+  router.get('/payment', (req, res, next) => {
+    var stripeToken = req.body.stripeToken;
+    var currentCharges = Math.round(req.body.stripeMony  * 100)// Total Money  in the cart // * by 100 because it need to be converted to cent
+
+    stripe.customers.create({
+      // So that be can check the people who buy stuf
+      source: stripeToken,
+    }).then((customer) => {
+      return  stripe.charges.create({
+
+        // This is all information charged from customers
+        amount: currentCharges,
+        currency: 'usd',
+        customer: customer.id
       });
     });
   });
